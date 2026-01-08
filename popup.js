@@ -1,20 +1,35 @@
 const timeList = document.getElementById("timeList");
+const resetBtn = document.getElementById("resetBtn");
 
 chrome.storage.local.get(null, (items) => {
   const domains = Object.keys(items);
+
   if (domains.length === 0) {
-    timeList.innerText = "No data yet!";
+    timeList.innerHTML = "<p style='text-align:center;color:#777;'>No data yet</p>";
     return;
   }
 
   domains.forEach(domain => {
     const timeMs = items[domain];
-    const seconds = Math.floor(timeMs / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const displayTime = minutes > 0 ? `${minutes} min ${seconds % 60} sec` : `${seconds} sec`;
+    const totalSeconds = Math.floor(timeMs / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
 
-    const div = document.createElement("div");
-    div.innerText = `${domain}: ${displayTime}`;
-    timeList.appendChild(div);
+    const siteDiv = document.createElement("div");
+    siteDiv.className = "site";
+
+    siteDiv.innerHTML = `
+      <div class="site-name">${domain}</div>
+      <div class="site-time">${minutes}m ${seconds}s</div>
+    `;
+
+    timeList.appendChild(siteDiv);
+  });
+});
+
+// Reset button
+resetBtn.addEventListener("click", () => {
+  chrome.storage.local.clear(() => {
+    location.reload();
   });
 });
