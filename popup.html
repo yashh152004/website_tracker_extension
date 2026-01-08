@@ -1,12 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Time Tracker</title>
+  <title>Time Tracker Pro</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>Website Time Tracker</h2>
-  <div id="timeList"></div>
+  <div class="container">
+    <h1>⏱ Time Tracker Pro</h1>
+    <p class="subtitle">Today's usage</p>
+
+    <canvas id="usageChart"></canvas>
+
+    <div id="timeList"></div>
+
+    <button id="resetBtn">Reset Today</button>
+  </div>
+
+  <script src="chart.min.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

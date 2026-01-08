@@ -1,35 +1,44 @@
 const timeList = document.getElementById("timeList");
 const resetBtn = document.getElementById("resetBtn");
+const ctx = document.getElementById("usageChart");
 
-chrome.storage.local.get(null, (items) => {
-  const domains = Object.keys(items);
+const today = new Date().toISOString().split("T")[0];
 
-  if (domains.length === 0) {
-    timeList.innerHTML = "<p style='text-align:center;color:#777;'>No data yet</p>";
-    return;
+chrome.storage.local.get([today], (data) => {
+  const dayData = data[today] || {};
+  const labels = [];
+  const values = [];
+
+  for (const site in dayData) {
+    const seconds = Math.floor(dayData[site] / 1000);
+    labels.push(site);
+    values.push(Math.floor(seconds / 60));
+
+    const div = document.createElement("div");
+    div.className = "site";
+    div.innerHTML = `<span>${site}</span><span>${seconds}s</span>`;
+    timeList.appendChild(div);
   }
 
-  domains.forEach(domain => {
-    const timeMs = items[domain];
-    const totalSeconds = Math.floor(timeMs / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-
-    const siteDiv = document.createElement("div");
-    siteDiv.className = "site";
-
-    siteDiv.innerHTML = `
-      <div class="site-name">${domain}</div>
-      <div class="site-time">${minutes}m ${seconds}s</div>
-    `;
-
-    timeList.appendChild(siteDiv);
+  new Chart(ctx, {
+    type: "doughnut",
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        backgroundColor: [
+          "#6366f1", "#22c55e", "#f97316", "#ef4444", "#14b8a6"
+        ]
+      }]
+    },
+    options: {
+      plugins: {
+        legend: { display: false }
+      }
+    }
   });
 });
 
-// Reset button
-resetBtn.addEventListener("click", () => {
-  chrome.storage.local.clear(() => {
-    location.reload();
-  });
-});
+resetBtn.onclick = () => {
+  chrome.storage.local.remove(today, () => location.reload());
+};
