@@ -1,22 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Time Tracker Pro</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Usage Tracker Pro</title>
+  <link rel="stylesheet" href="popup.css">
 </head>
 <body>
   <div class="container">
-    <h1>⏱ Time Tracker Pro</h1>
-    <p class="subtitle">Today's usage</p>
+    <h1>Today's Website Usage</h1>
+    <div class="subtitle">Track your browsing time</div>
 
-    <canvas id="usageChart"></canvas>
+    <!-- Doughnut chart -->
+    <canvas id="usageChart" width="250" height="250"></canvas>
 
+    <!-- Site usage list -->
     <div id="timeList"></div>
 
+    <!-- Reset button -->
     <button id="resetBtn">Reset Today</button>
   </div>
 
+  <!-- Load Chart.js first -->
   <script src="chart.min.js"></script>
+  <!-- Then your popup logic -->
   <script src="popup.js"></script>
 </body>
 </html>

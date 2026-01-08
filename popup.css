@@ -1,7 +1,7 @@
 body {
-  width: 320px;
   margin: 0;
-  font-family: "Inter", system-ui, sans-serif;
+  width: 320px;
+  font-family: "Inter", Arial, sans-serif;
   background: linear-gradient(135deg, #0f172a, #020617);
   color: white;
 }
@@ -13,11 +13,12 @@ body {
 h1 {
   font-size: 18px;
   text-align: center;
+  margin-bottom: 4px;
 }
 
 .subtitle {
-  font-size: 12px;
   text-align: center;
+  font-size: 12px;
   color: #cbd5f5;
   margin-bottom: 10px;
 }
@@ -25,11 +26,12 @@ h1 {
 #timeList {
   max-height: 180px;
   overflow-y: auto;
+  margin-top: 10px;
 }
 
 .site {
   background: rgba(255,255,255,0.08);
-  padding: 8px;
+  padding: 8px 10px;
   border-radius: 8px;
   margin-bottom: 6px;
   display: flex;
@@ -46,6 +48,7 @@ button {
   background: #6366f1;
   color: white;
   cursor: pointer;
+  font-size: 14px;
 }
 
 button:hover {

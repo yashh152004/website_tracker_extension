@@ -1,34 +1,55 @@
-let activeTabId = null;
 let activeDomain = null;
 let startTime = null;
 
-// Track tab changes
-chrome.tabs.onActivated.addListener(async (activeInfo) => {
-  saveTime(); // Save time of previous tab
-  const tab = await chrome.tabs.get(activeInfo.tabId);
-  startTracking(tab);
-});
-
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (tabId === activeTabId && changeInfo.status === "complete") {
-    saveTime();
-    startTracking(tab);
-  }
-});
-
-function startTracking(tab) {
-  activeTabId = tab.id;
-  activeDomain = new URL(tab.url).hostname;
-  startTime = Date.now();
+function getTodayKey() {
+  return new Date().toISOString().split("T")[0];
 }
 
 function saveTime() {
   if (!activeDomain || !startTime) return;
+  const elapsed = Date.now() - startTime; // in ms
+  const today = getTodayKey();
 
-  const elapsed = Date.now() - startTime;
-  chrome.storage.local.get([activeDomain], (result) => {
-    const prevTime = result[activeDomain] || 0;
-    const newTime = prevTime + elapsed;
-    chrome.storage.local.set({ [activeDomain]: newTime });
+  chrome.storage.local.get([today], (data) => {
+    const dayData = data[today] || {};
+    dayData[activeDomain] = (dayData[activeDomain] || 0) + elapsed;
+    chrome.storage.local.set({ [today]: dayData });
   });
+
+  startTime = Date.now();
 }
+
+// Track active tab change
+chrome.tabs.onActivated.addListener(async (info) => {
+  saveTime();
+  const tab = await chrome.tabs.get(info.tabId);
+  if (tab && tab.url.startsWith("http")) {
+    activeDomain = new URL(tab.url).hostname;
+    startTime = Date.now();
+  } else {
+    activeDomain = null;
+  }
+});
+
+// Track tab URL changes
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.status === "complete" && tab.url.startsWith("http")) {
+    saveTime();
+    activeDomain = new URL(tab.url).hostname;
+    startTime = Date.now();
+  }
+});
+
+// Track window focus changes
+chrome.windows.onFocusChanged.addListener(async (windowId) => {
+  saveTime();
+  if (windowId === chrome.windows.WINDOW_ID_NONE) {
+    activeDomain = null;
+  } else {
+    const [tab] = await chrome.tabs.query({ active: true, windowId });
+    if (tab && tab.url.startsWith("http")) {
+      activeDomain = new URL(tab.url).hostname;
+      startTime = Date.now();
+    }
+  }
+});

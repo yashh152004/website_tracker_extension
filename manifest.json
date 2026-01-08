@@ -1,18 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Time Tracker Pro",
-  "version": "1.0.0",
-  "description": "Track and visualize how much time you spend on websites daily.",
-  "permissions": ["tabs", "storage"],
-  "background": {
-    "service_worker": "background.js"
-  },
-  "action": {
-    "default_popup": "popup.html"
-  },
-  "icons": {
-    "16": "icon.png",
-    "48": "icon.png",
-    "128": "icon.png"
-  }
+  "name": "Usage Tracker",
+  "version": "1.0",
+  "action": { "default_popup": "popup.html" },
+  "permissions": ["storage", "tabs"],
+  "background": { "service_worker": "background.js" }
 }
